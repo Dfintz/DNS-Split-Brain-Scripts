@@ -1,0 +1,28 @@
+Import-Csv .\CN.csv | ForEach-Object {
+
+#Def variable
+$fqdn = $_.FQDN
+$srv = $fqdn.split(“.”)[0]
+$domain= $fqdn -replace “$srv.”,””
+$alias = $_.alias
+# add CNAME Dns entries
+
+Add-DnsServerResourceRecord -ZoneName $domain -CNAME -Name $alias -HostNameAlias $fqdn
+
+Add-DnsServerResourceRecord -ZoneName $domain” -CNAME -Name $alias -HostNameAlias $fqdn -ZoneScope $scope
+
+}
+
+#Add SRV records
+
+$zone = “domain”
+
+$records=Import-Csv c:\scripts\SRVtoipmport.csv
+
+$name=$record.resource+”.”+$record.path
+
+Add-DnsServerResourceRecord -srv -zonename $zone –name $name –domainname $record.name –weight 100 –priority 0 –port $record.port
+
+Add-DnsServerResourceRecord -srv -zonename $zone -ZoneScope “internal” –name $name –domainname $record.name –weight 100 –priority 0 –port $record.port
+
+}
