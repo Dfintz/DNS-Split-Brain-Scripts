@@ -1,0 +1,20 @@
+$destination = Read-Host -Prompt 'Please provide the Backup Drive name'
+$Sources = Get-Content '.\sources.txt'
+if (test-path $destination){
+
+    Foreach ($source in $sources ){ 
+        $files = Get-ChildItem $Source -recurse 
+        $count = $files.count
+        $i = 0
+        Write-Host "Files are copying. Please wait...." -ForegroundColor Green
+        foreach ($file in $files){
+            $Filename=$File.Fullname.tolower().replace($Source,'')
+            $DestinationFile=($Destination+$Filename)
+            Write-Progress -Activity "Copying data from $Source to '$Destination'" -Status "Copying File $Filename" -PercentComplete (($i/$count)*100)
+            Copy-Item $File.FullName -Destination $DestinationFile
+        }   $i++
+    }
+}
+else {
+    Write-Output "No '$Destination' drive found"
+}
