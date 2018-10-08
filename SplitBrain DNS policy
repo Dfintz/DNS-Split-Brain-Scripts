@@ -1,0 +1,19 @@
+$scope = “internal”
+
+Import-CSV .\DNSzones.csv | ForEach-Object {
+#Def variable
+$zone = $_.domain
+
+#Create Primary DNS Zones
+
+Add-DnsServerPrimaryZone -zonename $zone -zonefile “$($zone).dns”
+
+#Create Zone Scopes
+
+Add-DnsServerZoneScope -ZoneName $zone -zonefile “$($zone).dns” -Name $scope
+
+#Create the DNS policy for the zone
+
+Add-DnsServerQueryResolutionPolicy -Name “SplitBrainZonePolicy” -Action ALLOW -ServerInterface “eq,192.168.1.10” -ZoneScope “internal,1” -ZoneName $zone
+
+}
