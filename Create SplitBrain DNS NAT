@@ -1,0 +1,11 @@
+Import-CSV .\subnetNAT.csv | ForEach-Object {
+
+#Def variable
+$nid = $_.nat
+$addr = $_.nat -split “\.”
+$zfile = “$($addr[1]).$($addr[0]).in-addr.arpa”
+
+#Create reverse Zone Scopes
+
+Add-DnsServerPrimaryZone -NetworkID $nid -ZoneFile $zfile
+}
