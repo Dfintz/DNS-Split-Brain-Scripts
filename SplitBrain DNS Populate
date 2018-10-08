@@ -1,0 +1,14 @@
+Import-Csv .\Records.CSV | ForEach-Object {
+
+$addr = $_.Address
+$nataddr = $_.NATAddress
+$zonename = $_.zonename
+$hostname = $_.hostname
+$fqdn=$hostname+”.”+$zonename
+#Primary A & PTR Dns entries
+
+Add-DnsServerResourceRecordA -ZoneName $zone -Name $fqdn -IPv4Address $NATaddr -CreatePtr
+
+Add-DnsServerResourceRecordA -ZoneName $zone -Name $fqdn -IPv4Address $addr -ZoneScope $scope
+
+}
